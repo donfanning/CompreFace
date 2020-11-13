@@ -12,13 +12,14 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
+import os
 import logging
 from typing import List, Tuple
 
 import attr
 import numpy as np
 from insightface.app import FaceAnalysis
-from insightface.model_zoo import model_zoo
+from insightface.model_zoo import model_zoo, model_store, face_recognition
 from insightface.utils import face_align
 
 from src.constants import ENV
@@ -49,6 +50,18 @@ class InsightFaceBoundingBox(BoundingBoxDTO):
                                       landmark=self.landmark * coefficient)
 
 
+def get_calculation_model(name, root=os.path.join('~', '.insightface', 'models')):
+    try:
+        # loading insight models
+        return model_zoo.get_model(name)
+    except ValueError:
+        # loading custom model from .insightface/models
+        root = os.path.expanduser(root)
+        dir_path = os.path.join(root, name)
+        file_path = model_store.find_params_file(dir_path)
+        return face_recognition.FaceRecognition(name, False, file_path)
+
+
 class InsightFace(FaceScanner):
     ID = 'InsightFace'
     DETECTION_MODEL_NAME = ENV.DETECTION_MODEL
@@ -58,7 +71,7 @@ class InsightFace(FaceScanner):
     def __init__(self):
         super().__init__()
         self._detection_model = FaceAnalysis(det_name=self.DETECTION_MODEL_NAME, rec_name=None, ga_name=None)
-        self._calculation_model = model_zoo.get_model(self.CALCULATION_MODEL_NAME)
+        self._calculation_model = get_calculation_model(self.CALCULATION_MODEL_NAME)
         self._CTX_ID = ENV.GPU_ID
         self._NMS = 0.4
         self._detection_model.prepare(ctx_id=self._CTX_ID, nms=self._NMS)
