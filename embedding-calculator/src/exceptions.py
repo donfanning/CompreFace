@@ -37,10 +37,6 @@ class OneDimensionalImageIsGivenError(BadRequest):
     description = "Given image has only one dimension"
 
 
-class MoreThanOneFaceFoundError(BadRequest):
-    description = "Found more than one face in the given image"
-
-
 class ClassifierIsAlreadyTrainingError(Locked):
     description = "Classifier training is already in progress"
 
@@ -74,3 +70,6 @@ class CouldNotConnectToDatabase(InternalServerError):
 class NotEnoughUniqueFacesError(BadRequest):
     description = "Not enough unique faces to start training a new classifier model. " \
                   "Deleting existing classifiers, if any."
+
+class InvalidFaceDetectorPlugin(BadRequest):
+    description = "Invalid face detector plugin"

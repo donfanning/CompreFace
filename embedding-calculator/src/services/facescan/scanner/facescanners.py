@@ -27,4 +27,7 @@ if ENV_MAIN.SCANNER == 'Facenet2018':
 
 id_2_face_scanner_cls = {backend.ID: backend for backend in _ALL_SCANNERS}
 TESTED_SCANNERS = [id_2_face_scanner_cls[k] for k in ENV_MAIN.SCANNERS]
-scanner = id_2_face_scanner_cls[ENV_MAIN.SCANNER]()
+# scanner = id_2_face_scanner_cls[ENV_MAIN.SCANNER]()
+
+from src.services.facescan.helpers import Scanner
+scanner = Scanner()

@@ -32,7 +32,29 @@ class ENV(Constants):
     GPU_ID = int(get_env('GPU_ID', '-1'))
     DETECTION_MODEL = get_env('DETECTION_MODEL', 'retinaface_r50_v1')
     CALCULATION_MODEL = get_env('CALCULATION_MODEL', 'arcface_r100_v1')
+    GENDERAGE_MODEL = get_env('GENDERAGE_MODEL', 'genderage_v1')
 
 
 LOGGING_LEVEL = logging._nameToLevel[ENV.LOGGING_LEVEL_NAME]
 ENV_MAIN = ENV
+
+
+MXNET_FACE_DETECTORS = (
+    '.plugins.insightface.FaceDetector',
+)
+MXNET_FACE_PLUGINS = (
+    '.plugins.insightface.Calculator',
+    '.plugins.insightface.GenderAgeDetector',
+)
+
+TF_FACE_DETECTORS = (
+    '.plugins.facenet.FaceDetector',
+)
+TF_FACE_PLUGINS = (
+    '.plugins.facenet.Calculator',
+    '.plugins.rude_carnie.AgeDetector',
+    '.plugins.rude_carnie.GenderDetector',
+)
+
+FACE_DETECTORS = TF_FACE_DETECTORS
+FACE_PLUGINS = TF_FACE_PLUGINS

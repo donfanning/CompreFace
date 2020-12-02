@@ -17,7 +17,7 @@ import pytest
 from sample_images import IMG_DIR, PERSON_B, PERSON_C
 from src.services.facescan.scanner.facescanner import FaceScanner
 from src.services.facescan.scanner.facescanners import TESTED_SCANNERS
-from src.services.facescan.scanner.test._scanner_cache import get_scanner
+from src.services.facescan.scanner.test._cache import read_img
 from src.services.utils.pyutils import first_and_only
 
 DIFFERENCE_THRESHOLD = {
@@ -35,9 +35,9 @@ def embeddings_are_equal(embedding1, embedding2, difference_threshold):
 @pytest.mark.integration
 @pytest.mark.parametrize('scanner_cls', TESTED_SCANNERS)
 def test__given_same_face_images__when_scanned__then_returns_same_embeddings(scanner_cls):
-    scanner: FaceScanner = get_scanner(scanner_cls)
-    img1 = IMG_DIR / PERSON_B[0]
-    img2 = IMG_DIR / PERSON_B[1]
+    scanner: FaceScanner = scanner_cls()
+    img1 = read_img(IMG_DIR / PERSON_B[0])
+    img2 = read_img(IMG_DIR / PERSON_B[1])
 
     emb1 = first_and_only(scanner.scan(img1)).embedding
     emb2 = first_and_only(scanner.scan(img2)).embedding
@@ -48,9 +48,9 @@ def test__given_same_face_images__when_scanned__then_returns_same_embeddings(sca
 @pytest.mark.integration
 @pytest.mark.parametrize('scanner_cls', TESTED_SCANNERS)
 def test__given_diff_face_images__when_scanned__then_returns_diff_embeddings(scanner_cls):
-    scanner: FaceScanner = get_scanner(scanner_cls)
-    img1 = IMG_DIR / PERSON_B[0]
-    img2 = IMG_DIR / PERSON_C[0]
+    scanner: FaceScanner = scanner_cls()
+    img1 = read_img(IMG_DIR / PERSON_B[0])
+    img2 = read_img(IMG_DIR / PERSON_C[0])
 
     emb1 = first_and_only(scanner.scan(img1)).embedding
     emb2 = first_and_only(scanner.scan(img2)).embedding
@@ -60,6 +60,7 @@ def test__given_diff_face_images__when_scanned__then_returns_diff_embeddings(sca
 @pytest.mark.integration
 @pytest.mark.parametrize('scanner_cls', TESTED_SCANNERS)
 def test__size_of_embeddings(scanner_cls):
-    scanner: FaceScanner = get_scanner(scanner_cls)
-    emb = first_and_only(scanner.scan(IMG_DIR / '007_B.jpg')).embedding
+    scanner: FaceScanner = scanner_cls()
+    img = read_img(IMG_DIR / PERSON_B[0])
+    emb = first_and_only(scanner.scan(img)).embedding
     assert len(emb) == 512
